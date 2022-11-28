@@ -10,6 +10,12 @@ const dbo = require("../db/conn");
  
 // This help convert the id from string to ObjectId for the _id.
 const ObjectId = require("mongodb").ObjectId;
+
+recordRoutes.get('/', (req, res) => {
+  res.json({
+      hello: 'hi',
+  })
+})
  
  
 // This section will help you get a list of all the records.
