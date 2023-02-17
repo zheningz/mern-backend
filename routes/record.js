@@ -17,23 +17,10 @@ recordRoutes.get('/', (req, res) => {
   })
 })
  
-// This section will help you get a list of all the records.
-recordRoutes.route("/annotations").get(function (req, res) {
- let db_connect = dbo.getDb("employees");
- db_connect
-   .collection("records")
-   .find({})
-   .toArray(function (err, result) {
-     if (err) throw err;
-     res.json(result);
-   });
-});
- 
 // This section will help you get a single record by id
-recordRoutes.route("/annotation/:id").get(function (req, res) {
- let db_connect = dbo.getDb();
- var img = parseInt(req.params.id);
- let myquery = { id: img };
+recordRoutes.route("/annotation/:id/:user").get(function (req, res) {
+ let db_connect = dbo.getDb("vis30k");
+ let myquery = { $and: [{id: parseInt(req.params.id)}, {user: req.params.user}] };
  db_connect
    .collection("annotation")
    .findOne(myquery, function (err, result) {
@@ -44,9 +31,11 @@ recordRoutes.route("/annotation/:id").get(function (req, res) {
  
 // This section will help you create a new record.
 recordRoutes.route("/add").post(function (req, response) {
- let db_connect = dbo.getDb();
+ let db_connect = dbo.getDb("vis30k");
  let annotation = {
    id: req.body.id,
+   user: req.body.user,
+   imageId: req.body.imageId,
    colour: req.body.colour,
    use: req.body.use,
    legend: req.body.legend,
@@ -61,11 +50,12 @@ recordRoutes.route("/add").post(function (req, response) {
 });
  
 // This section will help you update a record by id.
-recordRoutes.route("/update/:id").post(function (req, response) {
- let db_connect = dbo.getDb();
- let myquery = { id: parseInt(req.params.id) };
+recordRoutes.route("/update/:id/:user").post(function (req, response) {
+ let db_connect = dbo.getDb("vis30k");
+ let myquery = { $and: [{id: parseInt(req.params.id)}, {user: req.params.user}] };
  let newvalues = {
    $set: {
+    imageId: req.body.imageId,
     colour: req.body.colour,
     use: req.body.use,
     legend: req.body.legend,
