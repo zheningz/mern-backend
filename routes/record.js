@@ -16,14 +16,40 @@ recordRoutes.get('/', (req, res) => {
       hello: 'hi',
   })
 })
+
+// This section will help you get all records
+recordRoutes.route("/annotation").get(function (req, res) {
+  let db_connect = dbo.getDb("vis30k");
+  db_connect
+    .collection("annotation")
+    .find({})
+    .sort({ id: 1 })
+    .toArray(function (err, result) {
+      if (err) throw err;
+      res.json(result);
+    });
+ });
+
+ // This section will help you get all records by one user
+recordRoutes.route("/annotation/:user").get(function (req, res) {
+  let db_connect = dbo.getDb("vis30k");
+  db_connect
+    .collection("annotation")
+    .find({ user: req.params.user })
+    .sort({ id: 1 })
+    .toArray(function (err, result) {
+      if (err) throw err;
+      res.json(result);
+    });
+ });
  
-// This section will help you get a single record by id
+// This section will help you get a single record by index and username
 recordRoutes.route("/annotation/:id/:user").get(function (req, res) {
  let db_connect = dbo.getDb("vis30k");
- let myquery = { $and: [{id: parseInt(req.params.id)}, {user: req.params.user}] };
+ let recordquery = { $and: [{id: parseInt(req.params.id)}, {user: req.params.user}] };
  db_connect
    .collection("annotation")
-   .findOne(myquery, function (err, result) {
+   .findOne(recordquery, function (err, result) {
      if (err) throw err;
      res.json(result);
    });
