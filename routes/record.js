@@ -30,13 +30,25 @@ recordRoutes.route("/annotation").get(function (req, res) {
     });
  });
 
- // This section will help you get all records by one user
+// This section will help you get all records by one user
 recordRoutes.route("/annotation/:user").get(function (req, res) {
   let db_connect = dbo.getDb("vis30k");
   db_connect
     .collection("annotation")
     .find({ user: req.params.user })
     .sort({ id: 1 })
+    .toArray(function (err, result) {
+      if (err) throw err;
+      res.json(result);
+    });
+ });
+
+ // This section will help you get all records by id
+recordRoutes.route("/image/:id").get(function (req, res) {
+  let db_connect = dbo.getDb("vis30k");
+  db_connect
+    .collection("annotation")
+    .find({ id: parseInt(req.params.id) })
     .toArray(function (err, result) {
       if (err) throw err;
       res.json(result);
