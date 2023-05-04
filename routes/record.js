@@ -57,8 +57,7 @@ recordRoutes.route("/comment/:id").get(function (req, res) {
 let db_connect = dbo.getDb("vis30k");
 db_connect
   .collection("comment")
-  .find({})
-  .sort({ id: 1 })
+  .find({ id: parseInt(req.params.id) })
   .toArray(function (err, result) {
     if (err) throw err;
     res.json(result);
