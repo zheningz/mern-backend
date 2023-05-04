@@ -7,7 +7,7 @@ const recordRoutes = express.Router();
  
 // This will help us connect to the database
 const dbo = require("../db/conn");
- 
+
 // This help convert the id from string to ObjectId for the _id.
 const ObjectId = require("mongodb").ObjectId;
 
@@ -17,7 +17,57 @@ recordRoutes.get('/', (req, res) => {
   })
 })
 
-// This section will help you get all records
+
+
+// This section will create a new comment.
+recordRoutes.route("/add_comment").post(function (req, res) {
+  let db_connect = dbo.getDb("vis30k");
+  let comment = {
+    id: req.body.id,
+    user: req.body.user,
+    content: req.body.content,
+  };
+  db_connect.collection("comment").insertOne(comment, function (err, res) {
+    if (err) throw err;
+    res.json(res);
+  });
+ });
+
+ // This section will update a comment.
+recordRoutes.route("/update_comment/:id").post(function (req, response) {
+  let db_connect = dbo.getDb("vis30k");
+  let myquery = { id: parseInt(req.params.id) };
+  let newvalues = {
+    $set: {
+      user: req.body.user,
+      content: req.body.content,
+    },
+  };
+  db_connect
+    .collection("comment")
+    .updateOne(myquery, newvalues, function (err, res) {
+      if (err) throw err;
+      console.log("1 annotation updated");
+      response.json(res);
+    });
+ });
+
+// This section will get all records
+recordRoutes.route("/comment/:id").get(function (req, res) {
+let db_connect = dbo.getDb("vis30k");
+db_connect
+  .collection("comment")
+  .find({})
+  .sort({ id: 1 })
+  .toArray(function (err, result) {
+    if (err) throw err;
+    res.json(result);
+  });
+});
+
+
+
+// This section will get all records
 recordRoutes.route("/annotation").get(function (req, res) {
   let db_connect = dbo.getDb("vis30k");
   db_connect
@@ -30,7 +80,7 @@ recordRoutes.route("/annotation").get(function (req, res) {
     });
  });
 
-// This section will help you get all records by one user
+// This section will get all records by one user
 recordRoutes.route("/annotation/:user").get(function (req, res) {
   let db_connect = dbo.getDb("vis30k");
   db_connect
@@ -43,7 +93,7 @@ recordRoutes.route("/annotation/:user").get(function (req, res) {
     });
  });
 
- // This section will help you get all records by id
+ // This section will get all records by id
 recordRoutes.route("/image/:id").get(function (req, res) {
   let db_connect = dbo.getDb("vis30k");
   db_connect
@@ -55,7 +105,7 @@ recordRoutes.route("/image/:id").get(function (req, res) {
     });
  });
  
-// This section will help you get a single record by index and username
+// This section will get a single record by index and username
 recordRoutes.route("/annotation/:id/:user").get(function (req, res) {
  let db_connect = dbo.getDb("vis30k");
  let recordquery = { $and: [{id: parseInt(req.params.id)}, {user: req.params.user}] };
@@ -67,7 +117,7 @@ recordRoutes.route("/annotation/:id/:user").get(function (req, res) {
    });
 });
  
-// This section will help you create a new record.
+// This section will create a new record.
 recordRoutes.route("/add").post(function (req, response) {
  let db_connect = dbo.getDb("vis30k");
  let annotation = {
@@ -87,7 +137,7 @@ recordRoutes.route("/add").post(function (req, response) {
  });
 });
  
-// This section will help you update a record by id.
+// This section will update a record by id.
 recordRoutes.route("/update/:id/:user").post(function (req, response) {
  let db_connect = dbo.getDb("vis30k");
  let myquery = { $and: [{id: parseInt(req.params.id)}, {user: req.params.user}] };
@@ -111,7 +161,7 @@ recordRoutes.route("/update/:id/:user").post(function (req, response) {
    });
 });
  
-// This section will help you delete a record
+// This section will delete a record
 // recordRoutes.route("/:id").delete((req, response) => {
 //  let db_connect = dbo.getDb();
 //  let myquery = { _id: ObjectId(req.params.id) };
