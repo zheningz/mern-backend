@@ -20,7 +20,7 @@ recordRoutes.get('/', (req, res) => {
 
 
 // This section will create a new comment.
-recordRoutes.route("/add_comment").post(function (req, res) {
+recordRoutes.route("/add_comment").post(function (req, response) {
   let db_connect = dbo.getDb("vis30k");
   let comment = {
     id: req.body.id,
@@ -29,7 +29,7 @@ recordRoutes.route("/add_comment").post(function (req, res) {
   };
   db_connect.collection("comment").insertOne(comment, function (err, res) {
     if (err) throw err;
-    res.json(res);
+    response.json(res);
   });
  });
 
@@ -52,7 +52,7 @@ recordRoutes.route("/update_comment/:id").post(function (req, response) {
     });
  });
 
-// This section will get all records
+// This section will get one comment
 recordRoutes.route("/comment/:id").get(function (req, res) {
 let db_connect = dbo.getDb("vis30k");
 db_connect
