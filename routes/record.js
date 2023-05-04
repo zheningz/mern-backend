@@ -54,14 +54,14 @@ recordRoutes.route("/update_comment/:id").post(function (req, response) {
 
 // This section will get one comment
 recordRoutes.route("/comment/:id").get(function (req, res) {
-let db_connect = dbo.getDb("vis30k");
-db_connect
-  .collection("comment")
-  .find({ id: parseInt(req.params.id) })
-  .toArray(function (err, result) {
-    if (err) throw err;
-    res.json(result);
-  });
+  let db_connect = dbo.getDb("vis30k");
+  let commentquery = { id: parseInt(req.params.id) };
+  db_connect
+    .collection("comment")
+    .findOne(commentquery, function (err, result) {
+      if (err) throw err;
+      res.json(result);
+    });
 });
 
 
